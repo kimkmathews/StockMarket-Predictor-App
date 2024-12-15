@@ -94,7 +94,7 @@ def generate_features(df):
     df['Adj Low'] = df['Low'] * (df['Adj Close'] / df['Close'])
     df['Adj Vol'] = df['Volume'] * (df['Close'] / df['Adj Close'])
 
-    df['Adj Value'] = df['Adj Close'] * df['Adj Vol']
+    df['Adj Value'] = (df['Adj Close'] * df['Adj Vol'])
     
     df['Diff'] = df['Adj Close'].pct_change()
     # df['Diff_Vol'] = df['Adj Vol'].pct_change()
