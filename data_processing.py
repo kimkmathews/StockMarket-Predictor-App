@@ -93,9 +93,9 @@ def generate_features(df):
     df['Adj High'] = df['High'] * (df['Adj Close'] / df['Close'])
     df['Adj Low'] = df['Low'] * (df['Adj Close'] / df['Close'])
     df['Adj Vol'] = df['Volume'] * (df['Close'] / df['Adj Close'])
-
+    print('Debug 1')
     df['Adj Value'] = (df['Adj Close'] * df['Adj Vol'])
-    
+    print('Debug 2')
     df['Diff'] = df['Adj Close'].pct_change()
     # df['Diff_Vol'] = df['Adj Vol'].pct_change()
     df['EMA_7'] = df['Adj Close'].ewm(span=7, adjust=False).mean()
