@@ -93,9 +93,9 @@ def generate_features(df):
     df['Adj High'] = df['High'] * (df['Adj Close'] / df['Close'])
     df['Adj Low'] = df['Low'] * (df['Adj Close'] / df['Close'])
     df['Adj Vol'] = df['Volume'] * (df['Close'] / df['Adj Close'])
-    print('Debug 1')
-    df['Adj_Value'] = (df['Adj Close'] * df['Adj Vol'])
-    print('Debug 2')
+    
+    #df['Adj_Value'] = (df['Adj Close'] * df['Adj Vol'])
+    
     df['Diff'] = df['Adj Close'].pct_change()
     # df['Diff_Vol'] = df['Adj Vol'].pct_change()
     df['EMA_7'] = df['Adj Close'].ewm(span=7, adjust=False).mean()
@@ -135,7 +135,8 @@ def generate_features(df):
               'Daily_Close', 'Daily_Volume', 'Close_to_Open', 'Close_to_High', 'Close_to_Low',
     'Volume_Change_7', 'Volume_Change_14', 'Volume_Change_21',
     'EMA_7_Change', 'EMA_14_Change', 'EMA_21_Change',
-    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R','Adj_Value']
+    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R'#,'Adj_Value'
+	       ]
 
   # Add last close price and volume of the last 21 days
     for i in range(1, 7):
@@ -147,7 +148,7 @@ def generate_features(df):
       df[f'Volume_{i}'] = df['Volume'].shift(i)
       df[f'Diff_{i}'] = df['Diff'].shift(i)
       #df[f'Diff_Vol_{i}'] = df['Diff_Vol'].shift(i)
-      df[f'Adj_Value_{i}'] = df['Adj_Value'].shift(i)
+      #df[f'Adj_Value_{i}'] = df['Adj_Value'].shift(i)
       df[f'EMA_7_{i}'] = df['EMA_7'].shift(i)
       df[f'EMA_14_{i}'] = df['EMA_14'].shift(i)
       df[f'EMA_21_{i}'] = df['EMA_21'].shift(i)
@@ -178,7 +179,7 @@ def generate_features(df):
                        #f'EMA_7_Change_{i}',
                        #f'EMA_14_Change_{i}',
                        #f'EMA_21_Change_{i}'
-                       f'Adj_Value_{i}'
+                       #f'Adj_Value_{i}'
 
                        ])
     return df,features
