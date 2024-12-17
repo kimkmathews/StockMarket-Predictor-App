@@ -89,12 +89,12 @@ def calculate_bollinger_bands(prices, period=20, std_dev=2):
     return upper_band, lower_band
 
 def generate_features(df):
-    df['Adj Open'] = df['Open'] * (df['Adj Close'] / df['Close'])
-    df['Adj High'] = df['High'] * (df['Adj Close'] / df['Close'])
-    df['Adj Low'] = df['Low'] * (df['Adj Close'] / df['Close'])
-    df['Adj Vol'] = df['Volume'] * (df['Close'] / df['Adj Close'])
-
-    df['Adj Value'] = df['Adj Close'] * df['Adj Vol']
+    df['Adj Open'] = df.apply(lambda row: row['Open'] * (row['Adj Close'] / row['Close']), axis=1)
+    df['Adj High'] = df.apply(lambda row: row['High'] * (row['Adj Close'] / row['Close']), axis=1)
+    df['Adj Low'] = df.apply(lambda row: row['Low'] * (row['Adj Close'] / row['Close']), axis=1)
+    df['Adj Vol'] = df.apply(lambda row: row['Volume'] * (row['Close'] / row['Adj Close']), axis=1)
+    df['Adj Value'] = df.apply(lambda row: row['Adj Close'] * row['Adj Vol'], axis=1)
+    
     
     df['Diff'] = df['Adj Close'].pct_change()
     # df['Diff_Vol'] = df['Adj Vol'].pct_change()
@@ -107,19 +107,19 @@ def generate_features(df):
     df['MA_21_volume'] = df['Adj Vol'].rolling(window=21).mean()
 
     # Calculate new features
-    df['Daily_Close'] = (df['Adj Close'] - df['Adj Close']).shift(1) / df['Adj Close'].shift(1)
-    df['Daily_Volume'] = (df['Adj Vol'] - df['Adj Vol']).shift(1) / df['Adj Vol'].shift(1)
+    df['Daily_Close'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Close']).shift(1) / row['Adj Close'].shift(1), axis=1)
+    df['Daily_Volume'] = df.apply(lambda row: (row['Adj Vol'] - row['Adj Vol']).shift(1) / row['Adj Vol'].shift(1), axis=1)
 
-    df['Close_to_Open'] = (df['Adj Close'] - df['Adj Open']) / df['Adj Close']
-    df['Close_to_High'] = (df['Adj Close'] - df['Adj High']) / df['Adj Close']
-    df['Close_to_Low'] = (df['Adj Close'] - df['Adj Low']) / df['Adj Close']
+    df['Close_to_Open'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
+    df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
+    df['Close_to_Low'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Low']) / row['Adj Close'], axis=1)
 
-    df['Volume_Change_7'] = (df['Adj Vol'] - df['MA_7_volume']) / df['MA_21_volume']
-    df['Volume_Change_14'] = (df['Adj Vol'] - df['MA_14_volume']) / df['MA_21_volume']
-    df['Volume_Change_21'] = (df['Adj Vol'] - df['MA_21_volume']) / df['MA_21_volume']
-    df['EMA_7_Change'] = (df['Adj Close'] - df['EMA_7']) / df['Adj Close']
-    df['EMA_14_Change'] = (df['Adj Close'] - df['EMA_14']) / df['Adj Close']
-    df['EMA_21_Change'] = (df['Adj Close'] - df['EMA_21']) / df['Adj Close']
+    df['Volume_Change_7'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_7_volume']) / row['MA_7_volume'], axis=1)
+    df['Volume_Change_14'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_14_volume']) / row['MA_14_volume'], axis=1)
+    df['Volume_Change_21'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_21_volume']) / row['MA_21_volume'], axis=1)
+    df['EMA_7_Change'] = df.apply(lambda row: (row['Adj Close'] - row['EMA_7']) / row['Adj Close'], axis=1)
+    df['EMA_14_Change'] = df.apply(lambda row: (row['Adj Close'] - row['EMA_14']) / row['Adj Close'], axis=1)
+    df['EMA_21_Change'] = df.apply(lambda row: (row['Adj Close'] - row['EMA_21']) / row['Adj Close'], axis=1)
     
     df['RSI_14'] = calculate_rsi(df['Adj Close'], period=14)
     df['MACD'] = calculate_macd(df['Adj Close'])
@@ -135,7 +135,8 @@ def generate_features(df):
               'Daily_Close', 'Daily_Volume', 'Close_to_Open', 'Close_to_High', 'Close_to_Low',
     'Volume_Change_7', 'Volume_Change_14', 'Volume_Change_21',
     'EMA_7_Change', 'EMA_14_Change', 'EMA_21_Change',
-    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R','Adj Value']
+    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R'#,'Adj_Value'
+	       ]
 
   # Add last close price and volume of the last 21 days
     for i in range(1, 7):
@@ -147,7 +148,7 @@ def generate_features(df):
       df[f'Volume_{i}'] = df['Volume'].shift(i)
       df[f'Diff_{i}'] = df['Diff'].shift(i)
       #df[f'Diff_Vol_{i}'] = df['Diff_Vol'].shift(i)
-      df[f'Adj_Value_{i}'] = df['Adj Value'].shift(i)
+      #df[f'Adj_Value_{i}'] = df['Adj_Value'].shift(i)
       df[f'EMA_7_{i}'] = df['EMA_7'].shift(i)
       df[f'EMA_14_{i}'] = df['EMA_14'].shift(i)
       df[f'EMA_21_{i}'] = df['EMA_21'].shift(i)
@@ -178,7 +179,7 @@ def generate_features(df):
                        #f'EMA_7_Change_{i}',
                        #f'EMA_14_Change_{i}',
                        #f'EMA_21_Change_{i}'
-                       f'Adj_Value_{i}'
+                       #f'Adj_Value_{i}'
 
                        ])
     return df,features
