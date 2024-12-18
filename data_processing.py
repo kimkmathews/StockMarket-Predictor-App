@@ -110,7 +110,7 @@ def generate_features(df):
     df['Daily_Close'] = df['Adj Close'].pct_change().shift(1)
     df['Daily_Volume'] = df['Adj Vol'].pct_change().shift(1)
 
-    df['Close_to_Open'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
+    df['Close_to_Open_ratio'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
     df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
     df['Close_to_Low'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Low']) / row['Adj Close'], axis=1)
 
@@ -158,7 +158,7 @@ def generate_features(df):
 
       df[f'Daily_Close_{i}'] = df['Daily_Close'].shift(i)
       df[f'Daily_Volume_{i}'] = df['Daily_Volume'].shift(i)
-      df[f'Close_to_Open_{i}'] = df['Close_to_Open'].shift(i)
+      df[f'Close_to_Open_{i}'] = df['Close_to_Open_ratio'].shift(i)
       df[f'Close_to_High_{i}'] = df['Close_to_High'].shift(i)
       df[f'Close_to_Low_{i}'] = df['Close_to_Low'].shift(i)
       df[f'Volume_Change_7_{i}'] = df['Volume_Change_7'].shift(i)
