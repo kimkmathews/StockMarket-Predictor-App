@@ -105,10 +105,10 @@ def generate_features(df):
     df['MA_7_volume'] = df['Adj Vol'].rolling(window=7).mean()
     df['MA_14_volume'] = df['Adj Vol'].rolling(window=14).mean()
     df['MA_21_volume'] = df['Adj Vol'].rolling(window=21).mean()
-
+    
     # Calculate new features
-    df['Daily_Close'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Close']).shift(1) / row['Adj Close'].shift(1), axis=1)
-    df['Daily_Volume'] = df.apply(lambda row: (row['Adj Vol'] - row['Adj Vol']).shift(1) / row['Adj Vol'].shift(1), axis=1)
+    df['Daily_Close'] = df['Adj Close'].pct_change().shift(1)
+    df['Daily_Volume'] = df['Adj Vol'].pct_change().shift(1)
 
     df['Close_to_Open'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
     df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
