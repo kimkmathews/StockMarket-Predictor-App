@@ -111,8 +111,8 @@ def generate_features(df):
     df['Daily_Volume'] = df['Adj Vol'].pct_change().shift(1)
 
  #   df['Close_to_Open'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
-    df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
-    df['Close_to_Low'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Low']) / row['Adj Close'], axis=1)
+ #   df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
+ #   df['Close_to_Low'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Low']) / row['Adj Close'], axis=1)
 
     df['Volume_Change_7'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_7_volume']) / row['MA_7_volume'], axis=1)
     df['Volume_Change_14'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_14_volume']) / row['MA_14_volume'], axis=1)
