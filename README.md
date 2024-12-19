@@ -41,6 +41,4 @@ This project aims to develop a stock price prediction app for the National Stock
 
 **This app is intended for educational purposes only. It should not be used as a sole basis for investment decisions. Please consult with a qualified financial advisor before making any investment decisions.**
 
-Note: While classification models were explored during development, they were ultimately excluded due to performance limitations probably due to unrealistic target variables.
-
-*Note: While classification models were explored during development, they were ultimately excluded due to performance limitations and unrealistic target variables.*
+*Note: While classification models were explored during development, they were ultimately excluded due to performance limitations probably due to unrealistic target definition.*
