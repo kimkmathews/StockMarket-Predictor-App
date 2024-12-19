@@ -93,7 +93,7 @@ def generate_features(df):
     df['Adj High'] = df.apply(lambda row: row['High'] * (row['Adj Close'] / row['Close']), axis=1)
     df['Adj Low'] = df.apply(lambda row: row['Low'] * (row['Adj Close'] / row['Close']), axis=1)
     df['Adj Vol'] = df.apply(lambda row: row['Volume'] * (row['Close'] / row['Adj Close']), axis=1)
-    #df['Adj Value'] = df.apply(lambda row: row['Adj Close'] * row['Adj Vol'], axis=1)
+    df['Adj Value'] = df.apply(lambda row: row['Adj Close'] * row['Adj Vol'], axis=1)
     
     
     df['Diff'] = df['Adj Close'].pct_change()
@@ -110,9 +110,9 @@ def generate_features(df):
     df['Daily_Close'] = df['Adj Close'].pct_change().shift(1)
     df['Daily_Volume'] = df['Adj Vol'].pct_change().shift(1)
 
- #   df['Close_to_Open'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
- #   df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
- #   df['Close_to_Low'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Low']) / row['Adj Close'], axis=1)
+    df['Close_to_Open'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
+    df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
+    df['Close_to_Low'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Low']) / row['Adj Close'], axis=1)
 
     df['Volume_Change_7'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_7_volume']) / row['MA_7_volume'], axis=1)
     df['Volume_Change_14'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_14_volume']) / row['MA_14_volume'], axis=1)
@@ -132,10 +132,10 @@ def generate_features(df):
      # Select relevant features
     features = ['Adj Open','Adj High','Adj Low' ,'Adj Close', 'Adj Vol', 'Diff',
               'EMA_7', 'EMA_14', 'EMA_21', 'MA_7_volume','MA_14_volume' ,'MA_21_volume',
-              'Daily_Close', 'Daily_Volume', #'Close_to_Open', 'Close_to_High', 'Close_to_Low',
+              'Daily_Close', 'Daily_Volume', 'Close_to_Open', 'Close_to_High', 'Close_to_Low',
     'Volume_Change_7', 'Volume_Change_14', 'Volume_Change_21',
     'EMA_7_Change', 'EMA_14_Change', 'EMA_21_Change',
-    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R'#,'Adj_Value'
+    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R','Adj_Value'
 	       ]
 
   # Add last close price and volume of the last 21 days
@@ -148,7 +148,7 @@ def generate_features(df):
       df[f'Volume_{i}'] = df['Volume'].shift(i)
       df[f'Diff_{i}'] = df['Diff'].shift(i)
       #df[f'Diff_Vol_{i}'] = df['Diff_Vol'].shift(i)
-      #df[f'Adj_Value_{i}'] = df['Adj_Value'].shift(i)
+      df[f'Adj_Value_{i}'] = df['Adj_Value'].shift(i)
       df[f'EMA_7_{i}'] = df['EMA_7'].shift(i)
       df[f'EMA_14_{i}'] = df['EMA_14'].shift(i)
       df[f'EMA_21_{i}'] = df['EMA_21'].shift(i)
@@ -158,9 +158,9 @@ def generate_features(df):
 
       df[f'Daily_Close_{i}'] = df['Daily_Close'].shift(i)
       df[f'Daily_Volume_{i}'] = df['Daily_Volume'].shift(i)
- #     df[f'Close_to_Open_{i}'] = df['Close_to_Open'].shift(i)
- #     df[f'Close_to_High_{i}'] = df['Close_to_High'].shift(i)
-  #    df[f'Close_to_Low_{i}'] = df['Close_to_Low'].shift(i)
+      df[f'Close_to_Open_{i}'] = df['Close_to_Open'].shift(i)
+      df[f'Close_to_High_{i}'] = df['Close_to_High'].shift(i)
+      df[f'Close_to_Low_{i}'] = df['Close_to_Low'].shift(i)
       df[f'Volume_Change_7_{i}'] = df['Volume_Change_7'].shift(i)
       df[f'Volume_Change_14_{i}'] = df['Volume_Change_14'].shift(i)
       df[f'Volume_Change_21_{i}'] = df['Volume_Change_21'].shift(i)
@@ -179,7 +179,7 @@ def generate_features(df):
                        #f'EMA_7_Change_{i}',
                        #f'EMA_14_Change_{i}',
                        #f'EMA_21_Change_{i}'
-                       #f'Adj_Value_{i}'
+                       f'Adj_Value_{i}'
 
                        ])
     return df,features
