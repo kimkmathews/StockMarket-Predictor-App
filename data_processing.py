@@ -93,7 +93,7 @@ def generate_features(df):
     df['Adj High'] = df.apply(lambda row: row['High'] * (row['Adj Close'] / row['Close']), axis=1)
     df['Adj Low'] = df.apply(lambda row: row['Low'] * (row['Adj Close'] / row['Close']), axis=1)
     df['Adj Vol'] = df.apply(lambda row: row['Volume'] * (row['Close'] / row['Adj Close']), axis=1)
-    df['Adj Value'] = df.apply(lambda row: row['Adj Close'] * row['Adj Vol'], axis=1)
+    df['Adj_Value'] = df.apply(lambda row: row['Adj Close'] * row['Adj Vol'], axis=1)
     
     
     df['Diff'] = df['Adj Close'].pct_change()
