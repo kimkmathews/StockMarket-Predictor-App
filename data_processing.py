@@ -89,53 +89,49 @@ def calculate_bollinger_bands(prices, period=20, std_dev=2):
     return upper_band, lower_band
 
 def generate_features(df):
-    df['Adj Open'] = df.apply(lambda row: row['Open'] * (row['Adj Close'] / row['Close']), axis=1)
-    df['Adj High'] = df.apply(lambda row: row['High'] * (row['Adj Close'] / row['Close']), axis=1)
-    df['Adj Low'] = df.apply(lambda row: row['Low'] * (row['Adj Close'] / row['Close']), axis=1)
-    df['Adj Vol'] = df.apply(lambda row: row['Volume'] * (row['Close'] / row['Adj Close']), axis=1)
-    df['Adj_Value'] = df.apply(lambda row: row['Adj Close'] * row['Adj Vol'], axis=1)
+    df['Value'] = df.apply(lambda row: row['Close'] * row['Volume'], axis=1)
     
     
-    df['Diff'] = df['Adj Close'].pct_change()
-    # df['Diff_Vol'] = df['Adj Vol'].pct_change()
-    df['EMA_7'] = df['Adj Close'].ewm(span=7, adjust=False).mean()
-    df['EMA_14'] = df['Adj Close'].ewm(span=14, adjust=False).mean()
-    df['EMA_21'] = df['Adj Close'].ewm(span=21, adjust=False).mean()
+    df['Diff'] = df['Close'].pct_change()
+    # df['Diff_Vol'] = df['Volume'].pct_change()
+    df['EMA_7'] = df['Close'].ewm(span=7, adjust=False).mean()
+    df['EMA_14'] = df['Close'].ewm(span=14, adjust=False).mean()
+    df['EMA_21'] = df['Close'].ewm(span=21, adjust=False).mean()
 
-    df['MA_7_volume'] = df['Adj Vol'].rolling(window=7).mean()
-    df['MA_14_volume'] = df['Adj Vol'].rolling(window=14).mean()
-    df['MA_21_volume'] = df['Adj Vol'].rolling(window=21).mean()
+    df['MA_7_volume'] = df['Volume'].rolling(window=7).mean()
+    df['MA_14_volume'] = df['Volume'].rolling(window=14).mean()
+    df['MA_21_volume'] = df['Volume'].rolling(window=21).mean()
     
     # Calculate new features
-    df['Daily_Close'] = df['Adj Close'].pct_change().shift(1)
-    df['Daily_Volume'] = df['Adj Vol'].pct_change().shift(1)
+    df['Daily_Close'] = df['Close'].pct_change().shift(1)
+    df['Daily_Volume'] = df['Volume'].pct_change().shift(1)
 
-    df['Close_to_Open'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Open']) / row['Adj Close'], axis=1)
-    df['Close_to_High'] = df.apply(lambda row: (row['Adj Close'] - row['Adj High']) / row['Adj Close'], axis=1)
-    df['Close_to_Low'] = df.apply(lambda row: (row['Adj Close'] - row['Adj Low']) / row['Adj Close'], axis=1)
+    df['Close_to_Open'] = df.apply(lambda row: (row['Close'] - row['Open']) / row['Close'], axis=1)
+    df['Close_to_High'] = df.apply(lambda row: (row['Close'] - row['High']) / row['Close'], axis=1)
+    df['Close_to_Low'] = df.apply(lambda row: (row['Close'] - row['Low']) / row['Close'], axis=1)
 
-    df['Volume_Change_7'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_7_volume']) / row['MA_7_volume'], axis=1)
-    df['Volume_Change_14'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_14_volume']) / row['MA_14_volume'], axis=1)
-    df['Volume_Change_21'] = df.apply(lambda row: (row['Adj Vol'] - row['MA_21_volume']) / row['MA_21_volume'], axis=1)
-    df['EMA_7_Change'] = df.apply(lambda row: (row['Adj Close'] - row['EMA_7']) / row['Adj Close'], axis=1)
-    df['EMA_14_Change'] = df.apply(lambda row: (row['Adj Close'] - row['EMA_14']) / row['Adj Close'], axis=1)
-    df['EMA_21_Change'] = df.apply(lambda row: (row['Adj Close'] - row['EMA_21']) / row['Adj Close'], axis=1)
+    df['Volume_Change_7'] = df.apply(lambda row: (row['Volume'] - row['MA_7_volume']) / row['MA_7_volume'], axis=1)
+    df['Volume_Change_14'] = df.apply(lambda row: (row['Volume'] - row['MA_14_volume']) / row['MA_14_volume'], axis=1)
+    df['Volume_Change_21'] = df.apply(lambda row: (row['Volume'] - row['MA_21_volume']) / row['MA_21_volume'], axis=1)
+    df['EMA_7_Change'] = df.apply(lambda row: (row['Close'] - row['EMA_7']) / row['Close'], axis=1)
+    df['EMA_14_Change'] = df.apply(lambda row: (row['Close'] - row['EMA_14']) / row['Close'], axis=1)
+    df['EMA_21_Change'] = df.apply(lambda row: (row['Close'] - row['EMA_21']) / row['Close'], axis=1)
     
-    df['RSI_14'] = calculate_rsi(df['Adj Close'], period=14)
-    df['MACD'] = calculate_macd(df['Adj Close'])
+    df['RSI_14'] = calculate_rsi(df['Close'], period=14)
+    df['MACD'] = calculate_macd(df['Close'])
     df['ATR_14'] = calculate_atr(df, period=14)
-    df['Upper_BB'], df['Lower_BB'] = calculate_bollinger_bands(df['Adj Close'])
+    df['Upper_BB'], df['Lower_BB'] = calculate_bollinger_bands(df['Close'])
     df['Stochastic_K'] = calculate_stochastic(df)
     df['Williams_R'] = calculate_williams_r(df)
 
 	
      # Select relevant features
-    features = ['Adj Open','Adj High','Adj Low' ,'Adj Close', 'Adj Vol', 'Diff',
+    features = ['Open','High','Low' ,'Close', 'Volume', 'Diff',
               'EMA_7', 'EMA_14', 'EMA_21', 'MA_7_volume','MA_14_volume' ,'MA_21_volume',
               'Daily_Close', 'Daily_Volume', 'Close_to_Open', 'Close_to_High', 'Close_to_Low',
     'Volume_Change_7', 'Volume_Change_14', 'Volume_Change_21',
     'EMA_7_Change', 'EMA_14_Change', 'EMA_21_Change',
-    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R','Adj_Value'
+    'RSI_14','MACD','ATR_14','Upper_BB','Lower_BB','Stochastic_K','Williams_R','Value'
 	       ]
 
   # Add last close price and volume of the last 21 days
@@ -144,11 +140,11 @@ def generate_features(df):
       df[f'Open_{i}'] = df['Open'].shift(i)
       df[f'High_{i}'] = df['High'].shift(i)
       df[f'Low_{i}'] = df['Low'].shift(i)
-      df[f'Close_{i}'] = df['Adj Close'].shift(i)
+      df[f'Close_{i}'] = df['Close'].shift(i)
       df[f'Volume_{i}'] = df['Volume'].shift(i)
       df[f'Diff_{i}'] = df['Diff'].shift(i)
       #df[f'Diff_Vol_{i}'] = df['Diff_Vol'].shift(i)
-      df[f'Adj_Value_{i}'] = df['Adj_Value'].shift(i)
+      df[f'Value_{i}'] = df['Value'].shift(i)
       df[f'EMA_7_{i}'] = df['EMA_7'].shift(i)
       df[f'EMA_14_{i}'] = df['EMA_14'].shift(i)
       df[f'EMA_21_{i}'] = df['EMA_21'].shift(i)
@@ -179,21 +175,21 @@ def generate_features(df):
                        #f'EMA_7_Change_{i}',
                        #f'EMA_14_Change_{i}',
                        #f'EMA_21_Change_{i}'
-                       f'Adj_Value_{i}'
+                       f'Value_{i}'
 
                        ])
     return df,features
 	
 def generate_target_classification(df, target_days, target_percent):
-    target_close = df['Adj Close'].shift(-target_days)
-    df['Target'] = np.where(target_close > df['Adj Close'] * (1 + (target_percent/100)), 1, 0)
+    target_close = df['Close'].shift(-target_days)
+    df['Target'] = np.where(target_close > df['Close'] * (1 + (target_percent/100)), 1, 0)
     df['Target_Close'] = target_close
     return df
 
     
 def generate_target_regression(df, target_days):
 
-    target_close = df['Adj Close'].shift(-target_days)
+    target_close = df['Close'].shift(-target_days)
     df['Target'] = target_close
     return df
     
@@ -226,20 +222,20 @@ def process_split_data(symbol,target_days, target_percent,model_type):
 
   if model_type == 'Classification':
     y_close_val = df_features['Target_Close'][-validation_days:]
-    merged_df = pd.concat([x_val[['Adj Close']], y_val], axis=1)
-    merged_df.columns = ['Adj Close', 'Target']
+    merged_df = pd.concat([x_val[['Close']], y_val], axis=1)
+    merged_df.columns = ['Close', 'Target']
     merged_df['Target_Close'] = y_close_val
     merged_df['Symbol'] = symbol
-    merged_df['Diff'] = (merged_df['Target_Close'] - merged_df['Adj Close']) / merged_df['Adj Close'] * 100
-    merged_df['New Target'] = np.where(merged_df['Target_Close'] > merged_df['Adj Close'] * (1 + (target_percent / 100)), 1, 0)
+    merged_df['Diff'] = (merged_df['Target_Close'] - merged_df['Close']) / merged_df['Close'] * 100
+    merged_df['New Target'] = np.where(merged_df['Target_Close'] > merged_df['Close'] * (1 + (target_percent / 100)), 1, 0)
     merged_df['Target'] = merged_df['New Target']
-    merged_df = merged_df[['Symbol', 'Adj Close', 'Target_Close', 'Target']]
+    merged_df = merged_df[['Symbol', 'Close', 'Target_Close', 'Target']]
   else:
     y_close_val = df_features['Target'][-validation_days:]
-    merged_df = pd.concat([x_val[['Adj Close']], y_val], axis=1)
-    merged_df.columns = ['Adj Close', 'Target']
+    merged_df = pd.concat([x_val[['Close']], y_val], axis=1)
+    merged_df.columns = ['Close', 'Target']
     merged_df['Symbol'] = symbol
-    merged_df = merged_df[['Symbol', 'Adj Close', 'Target']]
+    merged_df = merged_df[['Symbol', 'Close', 'Target']]
         
 
 
