@@ -199,7 +199,16 @@ def process_split_data(symbol,target_days, target_percent,model_type):
   symbol = symbol.upper()
   df = yf.download(symbol + '.NS',"2018-01-01", today)
   
+  if isinstance(df.columns, pd.MultiIndex):
+        # If there's only one ticker, drop the ticker level (level 1)
+        if len(df.columns.levels[1]) == 1:  # Check if there's only one ticker
+            df.columns = df.columns.droplevel(1)  # Drop the ticker level
+        else:
+            # If there are multiple tickers, you might want to handle this differently
+            # For now, we'll raise an error to ensure the function is used with a single ticker
+            raise ValueError("This function is designed for a single ticker. Multiple tickers detected.")
   
+  df = df[df['Volume'] > 0]
   df_features, features = generate_features(df)
   df_features = df_features.dropna()
 
